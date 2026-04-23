@@ -1,21 +1,18 @@
 #!/bin/bash
-# .git/hooks/pre-commit - Validate templates before commit
+# Pre-commit hook to validate CloudFormation templates
+set -e
 
-TEMPLATES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.yaml$|\.yml$|\.json$' | grep -i 'template\|cfn\|cloudformation')
+# Identify changed CloudFormation files
+TEMPLATES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.yaml$|\.yml$' | grep -i 'templates/' || true)
 
 if [ -z "$TEMPLATES" ]; then
-  exit 0
+    exit 0
 fi
 
-echo "Validating CloudFormation templates..."
+echo "🔍 Running validation on staged templates..."
 
 for template in $TEMPLATES; do
-  echo "  Checking: $template"
-  cfn-lint "$template"
-  if [ $? -ne 0 ]; then
-    echo "cfn-lint failed for $template"
-    exit 1
-  fi
+    ./.github/validation/validate-cfn.sh "$template"
 done
 
-echo "All templates passed validation."
+echo "✅ All staged templates passed validation."

@@ -1,11 +1,13 @@
-# .github/workflows/validate-cfn.yaml
 name: Validate CloudFormation
 
 on:
+  push:
+    branches: [ main, infra/cloudformation ]
   pull_request:
     paths:
       - 'templates/**'
       - '.github/workflows/validate-cfn.yaml'
+      - '.github/validation/**'
 
 jobs:
   validate:
@@ -26,27 +28,3 @@ jobs:
         run: |
           chmod +x .github/validation/validate-cfn.sh
           ./.github/validation/validate-cfn.sh
-
-      # - name: Install cfn-guard
-      #   run: |
-      #     curl -Lo cfn-guard.tar.gz https://github.com/aws-cloudformation/cloudformation-guard/releases/latest/download/cfn-guard-v3-ubuntu-latest.tar.gz
-      #     tar xzf cfn-guard.tar.gz
-      #     sudo mv cfn-guard /usr/local/bin/
-
-      # - name: Check policy compliance
-      #   run: |
-      #     cfn-guard validate \
-      #       --data templates/**/*.yaml \
-      #       --rules policies/rules.guard
-
-      # - name: AWS CloudFormation validate
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_REGION: us-east-1
-      #   run: |
-      #     for template in templates/*.yaml; do
-      #       echo "Validating $template"
-      #       aws cloudformation validate-template \
-      #         --template-body "file://$template"
-      #     done
