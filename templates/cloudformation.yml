@@ -161,4 +161,43 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet3 
+      SubnetId: !Ref PublicSubnet3
+  
+  EIPForNATGateway1:
+    Type: AWS::EC2::EIP
+    DeletionPolicy: Delete
+    Properties:
+      Domain: vpc
+
+  EIPForNATGateway2:
+    Type: AWS::EC2::EIP
+    DeletionPolicy: Delete
+    Properties:
+      Domain: vpc
+
+  EIPForNATGateway3:
+    Type: AWS::EC2::EIP
+    DeletionPolicy: Delete
+    Properties:
+      Domain: vpc
+
+  NATGateway1:
+    Type: AWS::EC2::NatGateway
+    DeletionPolicy: Delete
+    Properties:
+      AllocationId: !GetAtt EIPForNATGateway1.AllocationId
+      SubnetId: !Ref PublicSubnet1
+
+  NATGateway2:
+    Type: AWS::EC2::NatGateway
+    DeletionPolicy: Delete
+    Properties:
+      AllocationId: !GetAtt EIPForNATGateway2.AllocationId
+      SubnetId: !Ref PublicSubnet2
+
+  NATGateway3:
+    Type: AWS::EC2::NatGateway
+    DeletionPolicy: Delete
+    Properties:
+      AllocationId: !GetAtt EIPForNATGateway3.AllocationId
+      SubnetId: !Ref PublicSubnet3
