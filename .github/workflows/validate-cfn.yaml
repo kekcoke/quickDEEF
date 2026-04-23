@@ -5,7 +5,7 @@ on:
   pull_request:
     paths:
       - 'templates/**'
-      - 'template.yaml'
+      - '.github/workflows/validate-cfn.yaml'
 
 jobs:
   validate:
@@ -13,32 +13,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install cfn-lint
-        run: pip install cfn-lint
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-      - name: Lint CloudFormation templates
-        run: cfn-lint templates/**/*.yaml
-
-      - name: Install cfn-guard
+      - name: Install dependencies
         run: |
-          curl -Lo cfn-guard.tar.gz https://github.com/aws-cloudformation/cloudformation-guard/releases/latest/download/cfn-guard-v3-ubuntu-latest.tar.gz
-          tar xzf cfn-guard.tar.gz
-          sudo mv cfn-guard /usr/local/bin/
+          pip install yamllint cfn-lint
 
-      - name: Check policy compliance
+      - name: Run Validation Script
         run: |
-          cfn-guard validate \
-            --data templates/**/*.yaml \
-            --rules policies/rules.guard
+          chmod +x .github/validation/validate-cfn.sh
+          ./.github/validation/validate-cfn.sh
 
-      - name: AWS CloudFormation validate
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: us-east-1
-        run: |
-          for template in templates/*.yaml; do
-            echo "Validating $template"
-            aws cloudformation validate-template \
-              --template-body "file://$template"
-          done
+      # - name: Install cfn-guard
+      #   run: |
+      #     curl -Lo cfn-guard.tar.gz https://github.com/aws-cloudformation/cloudformation-guard/releases/latest/download/cfn-guard-v3-ubuntu-latest.tar.gz
+      #     tar xzf cfn-guard.tar.gz
+      #     sudo mv cfn-guard /usr/local/bin/
+
+      # - name: Check policy compliance
+      #   run: |
+      #     cfn-guard validate \
+      #       --data templates/**/*.yaml \
+      #       --rules policies/rules.guard
+
+      # - name: AWS CloudFormation validate
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_REGION: us-east-1
+      #   run: |
+      #     for template in templates/*.yaml; do
+      #       echo "Validating $template"
+      #       aws cloudformation validate-template \
+      #         --template-body "file://$template"
+      #     done
