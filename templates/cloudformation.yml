@@ -273,3 +273,19 @@ Resources:
     Properties:
       RouteTableId: !Ref PrivateRouteTable3
       SubnetId: !Ref PrivateSubnet3
+    
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    DeletionPolicy: Delete
+    Properties:
+      VpcId: !Ref VPC
+      GroupDescription: Allow HTTP and HTTPS from anywhere
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
