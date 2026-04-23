@@ -102,6 +102,34 @@ GitHub Actions pipeline:
 
 ---
 
+## 🛠️ Validation & Testing
+
+### Local Unit Tests
+Validate the CloudFormation templates for syntax and best practices using `yamllint` and `cfn-lint`:
+
+```bash
+# Install dependencies
+pip install yamllint cfn-lint
+
+# Run validation script
+chmod +x .github/validation/validate-cfn.sh
+./.github/validation/validate-cfn.sh
+```
+
+### Git Pre-commit Hook
+Automate local testing before every commit:
+```bash
+ln -s ../../.github/hooks/pre-commit.sh .git/hooks/pre-commit
+```
+
+### CI/CD (GitHub Actions)
+The repository is configured with a GitHub Runner that automatically validates templates on every push or pull request to `main` or `infra/cloudformation`.
+
+- **Workflow:** `.github/workflows/validate-cfn.yaml`
+- **Environment:** Ubuntu Latest (Python 3.x)
+
+---
+
 ## 📜 License
 
 MIT License
