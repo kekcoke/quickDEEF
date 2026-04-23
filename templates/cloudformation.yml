@@ -1,0 +1,38 @@
+Parameters: 
+  EnvironmentName: 
+    Description: QuickDeefInfrastructure
+    Type: String
+    Default: QuickDeefInfrastructure
+
+  VpcCIDR: 
+    Description: Enter CIDR notation for VPC
+    Type: String
+    Default: 10.10.0.0/16
+
+  PublicSubnet1CIDR: 
+    Description: Enter CIDR notation for public subnet in first Availability Zone
+    Type: String
+    Default: 10.10.1.0/24
+ 
+  PublicSubnet2CIDR: 
+    Description: Enter CIDR notation for public subnet in second Availability Zone
+    Type: String
+    Default: 10.10.2.0/24
+
+  PublicSubnet3CIDR: 
+    Description: Enter CIDR notation for public subnet in third Availability Zone
+    Type: String
+    Default: 10.10.3.0/24
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    DeletionPolicy: Delete
+    Properties:
+      CidrBlock:
+        Ref: VpcCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: QuickDeefInfrastructure
